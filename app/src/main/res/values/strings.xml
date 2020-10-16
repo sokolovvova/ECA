@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">ECA</string>
+    <string name="mainEditTextDescription">ECA</string>
+    <string name="regionFieldHint">Enter Region</string>
+</resources>

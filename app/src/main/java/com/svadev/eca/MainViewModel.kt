@@ -16,6 +16,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     var currentFragment = MutableLiveData(1)
     var selectedId = MutableLiveData<Int>(0)
     var datasource = 1
+    var sortOrder = MutableLiveData<Int>(5)
 
 
     var savedDatabase = SavedContractsDatabase.getInstance(application)
@@ -34,6 +35,10 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             2-> {contractListLD = savedDatabase.contractsDao().getAllContracts()
                 datasource=2}
         }
+    }
+
+    fun setNewSortOrder(n: Int){
+        sortOrder.postValue(n)
     }
 
     fun setNewRegion(n : Long){

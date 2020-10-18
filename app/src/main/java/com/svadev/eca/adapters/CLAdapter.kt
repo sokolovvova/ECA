@@ -16,8 +16,17 @@ class CLAdapter(private val myContractOnClickListener: ContractOnClickListener):
     private var contracts = emptyList<ContractModel>()
 
 
-    fun updateContractList(newContracts : List<ContractModel>){
-        contracts = newContracts.toMutableList()
+    fun updateContractList(newContracts : List<ContractModel>, sortBy: Int){
+        var finalContracts = emptyList<ContractModel>()
+        when(sortBy){
+            1-> finalContracts = newContracts.sortedWith(compareBy { it.volume })
+            2-> finalContracts = newContracts.sortedWith(compareByDescending { it.volume })
+            3-> finalContracts = newContracts.sortedWith(compareBy { it.price })
+            4-> finalContracts = newContracts.sortedWith(compareByDescending { it.price })
+            5-> finalContracts = newContracts.sortedWith(compareBy { it.dateIssued })
+            6-> finalContracts = newContracts.sortedWith(compareByDescending { it.dateIssued })
+        }
+        contracts = finalContracts.toMutableList()
     }
     fun getContractId(position: Int): Int{
         val id = contracts[position].contractId

@@ -21,6 +21,7 @@ class ContractListFragment: Fragment(),CLAdapter.ContractOnClickListener {
     private lateinit var recyclerView: RecyclerView
     private lateinit var cLAdapter: CLAdapter
     private lateinit var model: MainViewModel
+    private var sortOrder = 5
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -40,12 +41,19 @@ class ContractListFragment: Fragment(),CLAdapter.ContractOnClickListener {
         } ?: throw Exception("Invalid Activity")
 
         model.contractListLD.observe(viewLifecycleOwner){
-            cLAdapter.updateContractList(it)
+            cLAdapter.updateContractList(it,sortOrder)
             cLAdapter.notifyDataSetChanged()
+        }
+
+        model.sortOrder.observe(viewLifecycleOwner){
+            if(sortOrder!= it){
+                sortOrder=it
+                model.updateContractList()
+                model.updateSavedDatabase()
+            }
         }
         return view
     }
-
 
     override fun onItemClick(position: Int) {
         val id = cLAdapter.getContractId(position)

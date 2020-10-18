@@ -49,6 +49,17 @@ class ContractsRepository(context: Context) {
                             contractItems.postValue(response.body())
                         }
                     }
+                    400->{
+                        executor.execute {
+                            contractItems.postValue(listOf(ContractItemModel(type_id = 1090001)))
+                        }
+
+                    }
+                    403-> {
+                        executor.execute {
+                            contractItems.postValue(listOf(ContractItemModel(type_id = 1090003)))
+                        }
+                    }
                 }
             }
 

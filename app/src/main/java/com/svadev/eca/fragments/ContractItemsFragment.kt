@@ -59,6 +59,8 @@ class ContractItemsFragment: Fragment() {
                 viewVolume.text= volumeToString(contract.volume)
                 model.getContractData()
             }
+            else {contract= ContractModel(null,null,null,null,null,null,null,null,null,null,null,null,null)
+            fab.visibility = View.INVISIBLE}
         }
         model.currentContractItems.observe(viewLifecycleOwner){
             itemsAdapter.updateItemList(it)
@@ -83,8 +85,9 @@ class ContractItemsFragment: Fragment() {
         view.fabShare.setOnClickListener {
             if(this::contract.isInitialized){
                 val sendIntent: Intent = Intent().apply{
+                    val contractString ="<url=contract:30003576//${contract.contractId.toString()}>${contract.title}</url>"
                     action = Intent.ACTION_SEND
-                    putExtra(Intent.EXTRA_TEXT,contract.contractId.toString())
+                    putExtra(Intent.EXTRA_TEXT,contractString)
                     type = "text/plain"
                 }
                 val shareIntent = Intent.createChooser(sendIntent,null)

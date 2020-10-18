@@ -58,27 +58,37 @@ class ItemsAdapter: RecyclerView.Adapter<ItemsAdapter.ItemsViewHolder>() {
         }
 
         fun bind(item: ContractItemModel){
-            var name = EveSdaDatabase.getInstance(mItemName?.context!!).eveSdaDao().getItemNameByTypeId(item.type_id!!)
-            if(item.is_included==true) mStatus?.setBackgroundColor(mStatus?.context?.getColor(R.color.green)!!) else mStatus?.setBackgroundColor(mStatus?.context?.getColor(R.color.red)!!)
-            mNumber?.text = "x"+item.quantity.toString()
-            mVolume?.text = volumeToString(EveSdaDatabase.getInstance(mItemName?.context!!).eveSdaDao().getItemVolumeByTypeId(item.type_id)*item.quantity!!)
-            if(item.is_blueprint_copy!=null&&item.is_blueprint_copy==true) name = "[BPC]"+name
-            mItemName?.text= name
-            if(item.material_efficiency!=null) mME?.text = "ME: "+item.material_efficiency.toString()
-            if(item.time_efficiency!=null) mTE?.text = "TE: "+item.time_efficiency.toString()
-            if(item.runs!=null)mRuns?.text = "Runs:"+item.runs.toString()
+            when(item.type_id){
+                1090001->{
+                    mItemName?.text = "error[400] Contract not found!"
+                }
+                1090003->{
+                    mItemName?.text = "error[403] Forbidden"
+                }
+                else->{
+                    var name = EveSdaDatabase.getInstance(mItemName?.context!!).eveSdaDao().getItemNameByTypeId(item.type_id!!)
+                    if(item.is_included==true) mStatus?.setBackgroundColor(mStatus?.context?.getColor(R.color.green)!!) else mStatus?.setBackgroundColor(mStatus?.context?.getColor(R.color.red)!!)
+                    mNumber?.text = "x"+item.quantity.toString()
+                    mVolume?.text = volumeToString(EveSdaDatabase.getInstance(mItemName?.context!!).eveSdaDao().getItemVolumeByTypeId(item.type_id)*item.quantity!!)
+                    if(item.is_blueprint_copy!=null&&item.is_blueprint_copy==true) name = "[BPC]"+name
+                    mItemName?.text= name
+                    if(item.material_efficiency!=null) mME?.text = "ME: "+item.material_efficiency.toString()
+                    if(item.time_efficiency!=null) mTE?.text = "TE: "+item.time_efficiency.toString()
+                    if(item.runs!=null)mRuns?.text = "Runs:"+item.runs.toString()
 
-            try{
-                val ims = mItemName?.context!!.assets.open("img/item_icons/${item.type_id}_32.png")
-                val d = Drawable.createFromStream(ims,null)
-                mImage?.setImageDrawable(d)
+                    try{
+                        val ims = mItemName?.context!!.assets.open("img/item_icons/${item.type_id}_32.png")
+                        val d = Drawable.createFromStream(ims,null)
+                        mImage?.setImageDrawable(d)
+                    }
+                    catch (ex:FileNotFoundException){
+                        val ims = mItemName?.context!!.assets.open("img/item_icons/0_32.png")
+                        val d = Drawable.createFromStream(ims,null)
+                        mImage?.setImageDrawable(d)
+                    }
+                    catch (ex: IOException){}
+                }
             }
-            catch (ex:FileNotFoundException){
-                val ims = mItemName?.context!!.assets.open("img/item_icons/0_32.png")
-                val d = Drawable.createFromStream(ims,null)
-                mImage?.setImageDrawable(d)
-            }
-            catch (ex: IOException){}
         }
     }
 }

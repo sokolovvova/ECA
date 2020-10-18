@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "1023913444287",
+    "firebase_url": "https://eve-contract-analyzer.firebaseio.com",
+    "project_id": "eve-contract-analyzer",
+    "storage_bucket": "eve-contract-analyzer.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1023913444287:android:b75e3eb50b33f338e5170a",
+        "android_client_info": {
+          "package_name": "com.svadev.eca"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1023913444287-h5elu9lrdpnqqqcc95h4hhdmukgnbeuv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBuy7hbX2Zw8L2-TJl50kqUkoFgIVksqHM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1023913444287-h5elu9lrdpnqqqcc95h4hhdmukgnbeuv.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

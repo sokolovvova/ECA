@@ -112,7 +112,19 @@
         app:menu="@menu/nav_items"
         android:layout_gravity="start"
         app:itemTextColor="@color/white"
-        app:itemBackground="@color/colorSecondary" />
+        app:itemBackground="@color/colorSecondary" >
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_gravity="bottom"
+            android:layout_marginBottom="100dp">
+            <com.google.android.ads.nativetemplates.TemplateView
+                android:id="@+id/adsTemplate"
+                app:gnt_template_type="@layout/gnt_medium_template_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </LinearLayout>
+    </com.google.android.material.navigation.NavigationView>
 
 
 </androidx.drawerlayout.widget.DrawerLayout>

@@ -10,22 +10,24 @@ fun convertCRMLtoCML(list :List<ContractResponseModel>?): List<ContractModel>{
     if(list==null) return newList
     else{
         for(i in 0..list.lastIndex){
-            newList.add(
-                ContractModel(
-                    contractId = list[i].contract_id,
-                    buyout = list[i].buyout,
-                    dateExpired = list[i].date_expired,
-                    dateIssued = list[i].date_issued,
-                    daysToComplete = list[i].days_to_complete,
-                    isForCorporation = list[i].for_corporation,
-                    issuerCorpId = list[i].issuer_corporation_id,
-                    issuerId = list[i].issuer_id,
-                    price = list[i].price,
-                    startLocationId = list[i].start_location_id,
-                    title = list[i].title,
-                    type = list[i].type,
-                    volume = list[i].volume
-                ))
+            if(list[i].type=="item_exchange"){
+                newList.add(
+                    ContractModel(
+                        contractId = list[i].contract_id,
+                        buyout = list[i].buyout,
+                        dateExpired = list[i].date_expired,
+                        dateIssued = list[i].date_issued,
+                        daysToComplete = list[i].days_to_complete,
+                        isForCorporation = list[i].for_corporation,
+                        issuerCorpId = list[i].issuer_corporation_id,
+                        issuerId = list[i].issuer_id,
+                        price = list[i].price,
+                        startLocationId = list[i].start_location_id,
+                        title = list[i].title,
+                        type = list[i].type,
+                        volume = list[i].volume
+                    ))
+            }
         }
         return newList
     }

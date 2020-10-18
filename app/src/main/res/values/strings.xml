@@ -2,4 +2,16 @@
     <string name="app_name">ECA</string>
     <string name="mainEditTextDescription">ECA</string>
     <string name="regionFieldHint">Enter Region</string>
+    <string name="headerCopyright">Copyright</string>
+    <string name="copyright">Game data, icons, and the ESI API, copyright and courtesy of</string>
+    <string name="linkToCCP">
+        <a href ="https://www.ccpgames.com/">CCP Games</a>
+    </string>
+    <string name="headerContacts">Contacts</string>
+    <string name="email">Email: new.sva.84@gmail.com</string>
+    <string name="headerPP">Privacy policy</string>
+    <string name="linkToPP">
+        <a href ="https://eve-contract-analyze.flycricket.io/privacy.html">link</a>
+    </string>
+
 </resources>

@@ -7,5 +7,8 @@
     <item android:id="@+id/itemSavedContracts"
         android:title="Saved Contracts"
         android:icon="@drawable/ic_star_24"/>
+    <item android:id="@+id/itemAbout"
+        android:title="About"
+        android:icon="@drawable/ic_baseline_info_24"/>
 </group>
 </menu>

@@ -2,14 +2,10 @@ package com.svadev.eca
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.svadev.eca.db.ContractsDatabase
-import com.svadev.eca.db.EveSdaDatabase
 import com.svadev.eca.db.SavedContractsDatabase
-import com.svadev.eca.models.ContractItemModel
 import com.svadev.eca.models.ContractModel
-import com.svadev.eca.models.SavedContractModel
 
 class MainViewModel(application: Application) : AndroidViewModel(application) {
     var selectedRegion = MutableLiveData<Long>(10000043)
@@ -26,7 +22,6 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     val currentContractItems = contractsRepository.getCi()
     var savedContractListLD = savedDatabase.contractsDao().getAllContracts()
-    var currentDatabase =database
 
     fun changeDataSource(sourceNumber: Int){
         when(sourceNumber){
@@ -52,7 +47,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         contractsRepository.getContractList(selectedRegion.value)
     }
     fun destroyThread(){
-        contractsRepository.stopMultithreadWork()
+        contractsRepository.stopMultiThreadWork()
     }
     fun setNewCurrentContractId(i: Int){
         selectedId.postValue(i)

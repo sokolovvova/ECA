@@ -2,36 +2,32 @@ package com.svadev.eca
 
 import android.content.Context
 import android.util.Log
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
 import com.svadev.eca.db.ContractsDatabase
 import com.svadev.eca.models.ContractItemModel
 import com.svadev.eca.models.ContractResponseModel
-import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.schedulers.Schedulers
+import kotlinx.coroutines.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
-import java.util.concurrent.Executors
 
+@ObsoleteCoroutinesApi
+@Suppress("BlockingMethodInNonBlockingContext")
 class ContractsRepository(context: Context) {
-    val BASE_URL = "https://esi.evetech.net/latest/contracts/public/"
-    val appContext = context
-
-    var contractItems = MutableLiveData<List<ContractItemModel>>()
-
-    val executor = Executors.newSingleThreadExecutor()
-    val gson = Gson()
-    val retrofit = Retrofit.Builder()
-        .addConverterFactory(GsonConverterFactory.create(gson))
+    private val eveApiUrl = "https://esi.evetech.net/latest/contracts/public/"
+    private val appContext = context
+    private val scope = CoroutineScope(newFixedThreadPoolContext(4, "Background_Threads"))
+    private var contractItems = MutableLiveData<List<ContractItemModel>>()
+    private val retrofit = Retrofit.Builder()
+        .addConverterFactory(GsonConverterFactory.create(Gson()))
         .addCallAdapterFactory(RxJava3CallAdapterFactory.create())
-        .baseUrl(BASE_URL)
+        .baseUrl(eveApiUrl)
         .build()
-    val eveEsiApi = retrofit.create<EveEsiApi>(EveEsiApi::class.java)
+    private val eveEsiApi = retrofit.create(EveEsiApi::class.java)
 
     fun getCi(): MutableLiveData<List<ContractItemModel>> {
         return contractItems
@@ -44,94 +40,85 @@ class ContractsRepository(context: Context) {
                     call: Call<List<ContractItemModel>>,
                     response: Response<List<ContractItemModel>>
                 ) {
-                    when (response.code()) {
-                        200 -> {
-                            executor.execute {
+                    scope.launch {
+                        when (response.code()) {
+                            200 -> {
                                 contractItems.postValue(response.body())
                             }
-                        }
-                        400 -> {
-                            executor.execute {
-                                contractItems.postValue(listOf(ContractItemModel(type_id = 1090001)))
+                            400 -> {
+                                contractItems.postValue(listOf(ContractItemModel(type_id = 1090001 )))
                             }
-
-                        }
-                        403 -> {
-                            executor.execute {
+                            403 -> {
                                 contractItems.postValue(listOf(ContractItemModel(type_id = 1090003)))
+                            }
+                            else -> {
+                                contractItems.postValue(listOf(ContractItemModel(type_id = 1090000)))
                             }
                         }
                     }
                 }
 
                 override fun onFailure(call: Call<List<ContractItemModel>>, t: Throwable) {
-                    Log.d("Retrofit", "SomeError")
+                    scope.launch {
+                        contractItems.postValue(listOf(ContractItemModel(type_id = 1090000)))
+                    }
                 }
             })
+
     }
 
 
     fun getContractList(regionId: Long?) {
-        executor.execute {
-            eveEsiApi.getFirstPageOfContracts(regionId)
-                .enqueue(object : Callback<List<ContractResponseModel>> {
-                    override fun onResponse(
-                        call: Call<List<ContractResponseModel>>,
-                        response: Response<List<ContractResponseModel>>
-                    ) {
-                        when (response.code()) {
-                            200 -> {
-                                val array = arrayListOf<ContractResponseModel>()
-                                val pages = response.headers().get("x-pages")
-                                array.addAll(response.body() as ArrayList<ContractResponseModel>)
-                                if (pages != null) {
-                                    if (pages.toInt() > 1) {
-                                        var pagesList = (1..pages.toInt()).toList()
-                                        Observable.fromIterable(pagesList)
-                                            .flatMap { it ->
-                                                eveEsiApi.getContractsByPage(regionId, it)
-                                            }
-                                            .subscribeOn(Schedulers.single())
-                                            .observeOn(Schedulers.single())
-                                            .subscribe({ result ->
-                                                array.addAll(result)
-                                            }, { error ->
-                                                Log.d("Retrofit", "RxError")
-                                            }, {
-                                                ContractsDatabase.getInstance(appContext)
-                                                    .contractsDao().deleteAllContracts()
-                                                ContractsDatabase.getInstance(appContext)
-                                                    .contractsDao()
-                                                    .insertAllContracts(convertCRMLtoCML(array.toList()))
-                                            })
-                                    } else {
-                                        if (array.isEmpty()) array.add(
-                                            ContractResponseModel(
-                                                title = "Contracts not found!",
-                                                contract_id = 0
-                                            )
-                                        )
-                                        ContractsDatabase.getInstance(appContext).contractsDao()
-                                            .deleteAllContracts()
-                                        ContractsDatabase.getInstance(appContext).contractsDao()
-                                            .insertAllContracts(convertCRMLtoCML(array.toList()))
-                                    }
-                                }
-
+        scope.launch {
+            val array = arrayListOf<ContractResponseModel>()
+            try {
+                val response = eveEsiApi.getFirstPageOfContracts(regionId).execute()
+                if (response.code() == 200) {
+                    val pages = response.headers().get("x-pages")
+                    array.addAll(response.body() as ArrayList<ContractResponseModel>)
+                    pages?.let {
+                        if (it.toInt() > 1) {
+                            for (i in 2..it.toInt()) {
+                                val result = eveEsiApi.getContractsByPage(regionId, i).execute()
+                                array.addAll(result.body() as ArrayList<ContractResponseModel>)
                             }
                         }
                     }
-
-                    override fun onFailure(call: Call<List<ContractResponseModel>>, t: Throwable) {
-                        Log.d("Retrofit", "SomeError")
-                    }
-                })
-
+                    if (array.isEmpty()) array.add(
+                        ContractResponseModel(
+                            title = "Contracts not found!",
+                            contract_id = 0,
+                            type="item_exchange"
+                        )
+                    )
+                } else {
+                    array.add(
+                        ContractResponseModel(
+                            title = "An error occurred",
+                            contract_id = 0,
+                            type="item_exchange"
+                        )
+                    )
+                }
+            } catch (e: Exception) {
+                array.clear()
+                array.add(
+                    ContractResponseModel(
+                        title = "An error occurred",
+                        contract_id = 0,
+                        type="item_exchange"
+                    )
+                )
+            } finally {
+                ContractsDatabase.getInstance(appContext).contractsDao().deleteAllContracts()
+                ContractsDatabase.getInstance(appContext).contractsDao()
+                    .insertAllContracts(convertCRMLtoCML(array.toList()))
+                Log.d("Retrofit", "Final Array Size ${array.size}")
+            }
         }
     }
 
-    fun stopMultithreadWork() {
-        executor.shutdown()
+    fun stopMultiThreadWork() {
+        scope.cancel()
     }
-
 }

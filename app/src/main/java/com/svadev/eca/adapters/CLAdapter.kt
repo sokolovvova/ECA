@@ -58,12 +58,16 @@ class CLAdapter(private val myContractOnClickListener: ContractOnClickListener):
             itemView.setOnClickListener(this)
         }
         fun bind(item: ContractModel){
-            titleTextView?.text=item.title
-            locationTextView?.text= stationIdToName(item.startLocationId,myParent.context)
-            priceTextView?.text= priceToString(item.price)
-            volumeTextView?.text= volumeToString(item.volume)
+            when(item.contractId){
+                0,1 ->{titleTextView?.text=item.title}
+                else->{
+                    titleTextView?.text=item.title
+                    locationTextView?.text= stationIdToName(item.startLocationId,myParent.context)
+                    priceTextView?.text= priceToString(item.price)
+                    volumeTextView?.text= volumeToString(item.volume)
+                }
+            }
         }
-
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CLViewHolder {

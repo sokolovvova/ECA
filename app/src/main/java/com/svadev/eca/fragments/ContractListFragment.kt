@@ -30,6 +30,7 @@ class ContractListFragment: Fragment(),CLAdapter.ContractOnClickListener {
     ): View? {
         val view = inflater.inflate(R.layout.contract_list_fragment,container,false)
 
+
         cLAdapter = CLAdapter(this)
 
         recyclerView = view.contractsRV.apply {
@@ -52,6 +53,14 @@ class ContractListFragment: Fragment(),CLAdapter.ContractOnClickListener {
                 model.updateSavedDatabase()
             }
         }
+
+        model.datasource.observe(viewLifecycleOwner){
+            when(it){
+                1->model.changeTitle("Public contracts")
+                2->model.changeTitle("Saved contracts")
+            }
+        }
+
         return view
     }
 

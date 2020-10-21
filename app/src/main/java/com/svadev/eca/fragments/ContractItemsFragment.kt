@@ -1,7 +1,6 @@
 package com.svadev.eca.fragments
 
 import android.content.Intent
-import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -12,7 +11,6 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.svadev.eca.*
-import com.svadev.eca.adapters.CLAdapter
 import com.svadev.eca.adapters.ItemsAdapter
 import com.svadev.eca.db.ContractsDatabase
 import com.svadev.eca.db.SavedContractsDatabase
@@ -48,7 +46,7 @@ class ContractItemsFragment: Fragment() {
         model.selectedId.observe(viewLifecycleOwner){
             if(it!=0){
                 contract =
-                    if(model.datasource==1) ContractsDatabase.getInstance(context!!).contractsDao().getContractById(it)
+                    if(model.datasource.value==1) ContractsDatabase.getInstance(context!!).contractsDao().getContractById(it)
                     else SavedContractsDatabase.getInstance(context!!).contractsDao().getContractById(it)
                 viewTitle.text=contract.title
                 viewContractId.text="id: "+contract.contractId.toString()

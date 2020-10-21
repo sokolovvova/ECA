@@ -2,39 +2,55 @@ package com.svadev.eca
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.svadev.eca.db.ContractsDatabase
-import com.svadev.eca.db.EveSdaDatabase
 import com.svadev.eca.db.SavedContractsDatabase
-import com.svadev.eca.models.ContractItemModel
+import com.svadev.eca.models.AuthCharacterModel
 import com.svadev.eca.models.ContractModel
-import com.svadev.eca.models.SavedContractModel
+import kotlinx.coroutines.ObsoleteCoroutinesApi
 
+@ObsoleteCoroutinesApi
 class MainViewModel(application: Application) : AndroidViewModel(application) {
     var selectedRegion = MutableLiveData<Long>(10000043)
     var currentFragment = MutableLiveData(1)
     var selectedId = MutableLiveData<Int>(0)
-    var datasource = 1
+    var datasource = MutableLiveData(1)
     var sortOrder = MutableLiveData<Int>(5)
-
-
+    var title = MutableLiveData("Public Contracts")
+    val eveAuthToken = MutableLiveData<String>("")
+    private val prefProv = PreferenceProvider(application)
+    val authCharacterLd = MutableLiveData(AuthCharacterModel())
     var savedDatabase = SavedContractsDatabase.getInstance(application)
     var database = ContractsDatabase.getInstance(application)
     var contractListLD = database.contractsDao().getAllContracts()
-    val contractsRepository = ContractsRepository(application)
+    private val contractsRepository = ContractsRepository(application)
+    private val eveAuthRepository = EveAuthRepository(application)
 
     val currentContractItems = contractsRepository.getCi()
     var savedContractListLD = savedDatabase.contractsDao().getAllContracts()
-    var currentDatabase =database
+
+    fun updateAuthCharacter(){
+        authCharacterLd.postValue(prefProv.getAuthCharacter())
+    }
+
+
+    fun setEveAuthToken(str: String){
+        eveAuthToken.postValue(str)
+        eveAuthRepository.auth(str)
+    }
 
     fun changeDataSource(sourceNumber: Int){
         when(sourceNumber){
             1-> {contractListLD = database.contractsDao().getAllContracts()
-                datasource=1}
+                datasource.postValue(1)
+            }
             2-> {contractListLD = savedDatabase.contractsDao().getAllContracts()
-                datasource=2}
+                datasource.postValue(2)}
         }
+    }
+
+    fun changeTitle(str:String){
+        title.postValue(str)
     }
 
     fun setNewSortOrder(n: Int){
@@ -51,8 +67,9 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     fun updateContractList(){
         contractsRepository.getContractList(selectedRegion.value)
     }
+
     fun destroyThread(){
-        contractsRepository.stopMultithreadWork()
+        contractsRepository.stopMultiThreadWork()
     }
     fun setNewCurrentContractId(i: Int){
         selectedId.postValue(i)

@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "1023913444287-egrv759cr4968qpq0ntcho9ih9net2gj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.svadev.eca",
+            "certificate_hash": "70be2a7f6130dc9d562926b86893ef9b65cdfb41"
+          }
+        },
+        {
           "client_id": "1023913444287-h5elu9lrdpnqqqcc95h4hhdmukgnbeuv.apps.googleusercontent.com",
           "client_type": 3
         }

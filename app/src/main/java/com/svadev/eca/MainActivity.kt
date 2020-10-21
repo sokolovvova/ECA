@@ -1,7 +1,5 @@
 package com.svadev.eca
 
-import android.R.attr.name
-import android.R.id
 import android.content.Context
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
@@ -21,14 +19,18 @@ import com.google.android.gms.ads.AdLoader
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.MobileAds
 import com.google.android.gms.ads.formats.UnifiedNativeAd
-import com.google.firebase.analytics.FirebaseAnalytics
-import com.svadev.eca.fragments.AboutFragment
-import com.svadev.eca.fragments.ContractItemsFragment
-import com.svadev.eca.fragments.ContractListFragment
+import com.svadev.eca.fragments.*
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.coroutines.ObsoleteCoroutinesApi
 
-
+@ObsoleteCoroutinesApi
 class MainActivity : AppCompatActivity() {
+
+    //adMob
+    private lateinit var adAppId :String
+    private lateinit var adBannerId :String
+
+
     private var regionMap: Map<String, Long> = mapOf(
         "PR-01" to 13000001,
         "ADR05" to 12000005,
@@ -150,13 +152,17 @@ class MainActivity : AppCompatActivity() {
     private lateinit var adLoader : AdLoader
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(viewToolbar)
 
-        MobileAds.initialize(this,"ca-app-pub-7015375582758139~5274237787")
+        adAppId = getString(R.string.adMobAppId)
+        adBannerId =getString(R.string.adMobNativeBannerId)
 
-        adLoader = AdLoader.Builder(this,"ca-app-pub-7015375582758139/6395747767")
+        MobileAds.initialize(this,adAppId)
+
+        adLoader = AdLoader.Builder(this,adBannerId)
             .forUnifiedNativeAd { ad : UnifiedNativeAd ->
                 val colorDrawable = ColorDrawable(resources.getColor(R.color.colorPrimary))
                 val styles = NativeTemplateStyle.Builder().withMainBackgroundColor(colorDrawable).build()
@@ -171,7 +177,6 @@ class MainActivity : AppCompatActivity() {
             .build()
 
 
-        viewToolbar.title="Public contracts"
         supportFragmentManager.beginTransaction().add(
             R.id.mainFragmentContainer,
             ContractListFragment()
@@ -222,6 +227,10 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        model.title.observe(this){
+            viewToolbar.title=it
+        }
+
 
         model.selectedRegion.observe(this){ n-> viewRegionName.text = regionMap.filterValues { it==n }.keys.toString()
         }
@@ -248,6 +257,10 @@ class MainActivity : AppCompatActivity() {
         when(item.itemId){
             android.R.id.home -> {
                 drawerLayout.openDrawer(GravityCompat.START)
+            }
+            R.id.settings->{
+                viewToolbar.title = "Settings"
+                model.vmFragmentChanger(4)
             }
         }
         return super.onOptionsItemSelected(item)
@@ -297,6 +310,16 @@ class MainActivity : AppCompatActivity() {
             ).addToBackStack(fragmentId.toString()).commit()
                 adLoader.loadAd(AdRequest.Builder().build())
             }
+            4->{supportFragmentManager.beginTransaction().replace(
+                R.id.mainFragmentContainer,
+                SettingsFragment()
+            ).addToBackStack(fragmentId.toString()).commit()
+            }
+            5->{supportFragmentManager.beginTransaction().replace(
+                R.id.mainFragmentContainer,
+                LoginFragment()
+            ).addToBackStack(fragmentId.toString()).commit()
+            }
         }
     }
     override fun onDestroy() {
@@ -311,12 +334,13 @@ class MainActivity : AppCompatActivity() {
             10000043
         }
     }
+
     private fun configureNavigationDrawer(){
         navigation.setNavigationItemSelectedListener {
             when(it.itemId){
                 R.id.itemPublicContracts -> {
                     showBottomElements(1)
-                    viewToolbar.title = "Public contracts"
+                   // viewToolbar.title = "Public contracts"
                     drawerLayout.closeDrawer(GravityCompat.START)
                     model.changeDataSource(1)
                     showProgressBar(1)
@@ -327,7 +351,7 @@ class MainActivity : AppCompatActivity() {
                 R.id.itemSavedContracts -> {
                     showBottomElements(1)
                     showBottomElements(2)
-                    viewToolbar.title = "Saved contracts"
+                  //  viewToolbar.title = "Saved contracts"
                     drawerLayout.closeDrawer(GravityCompat.START)
                     model.changeDataSource(2)
                     model.vmFragmentChanger(1)
@@ -336,7 +360,6 @@ class MainActivity : AppCompatActivity() {
                 }
                 R.id.itemAbout->{
                     showBottomElements(3)
-                    viewToolbar.title = "About"
                     drawerLayout.closeDrawer(GravityCompat.START)
                     model.vmFragmentChanger(3)
                     true

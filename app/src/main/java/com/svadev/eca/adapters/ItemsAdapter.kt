@@ -59,6 +59,9 @@ class ItemsAdapter: RecyclerView.Adapter<ItemsAdapter.ItemsViewHolder>() {
 
         fun bind(item: ContractItemModel){
             when(item.type_id){
+                1090000->{
+                    mItemName?.text = "some error during connection"
+                }
                 1090001->{
                     mItemName?.text = "error[400] Contract not found!"
                 }
@@ -68,9 +71,9 @@ class ItemsAdapter: RecyclerView.Adapter<ItemsAdapter.ItemsViewHolder>() {
                 else->{
                     var name = EveSdaDatabase.getInstance(mItemName?.context!!).eveSdaDao().getItemNameByTypeId(item.type_id!!)
                     if(item.is_included==true) mStatus?.setBackgroundColor(mStatus?.context?.getColor(R.color.green)!!) else mStatus?.setBackgroundColor(mStatus?.context?.getColor(R.color.red)!!)
-                    mNumber?.text = "x"+item.quantity.toString()
+                    mNumber?.text = "x${item.quantity.toString()}"
                     mVolume?.text = volumeToString(EveSdaDatabase.getInstance(mItemName?.context!!).eveSdaDao().getItemVolumeByTypeId(item.type_id)*item.quantity!!)
-                    if(item.is_blueprint_copy!=null&&item.is_blueprint_copy==true) name = "[BPC]"+name
+                    if(item.is_blueprint_copy!=null&&item.is_blueprint_copy==true) name = "[BPC]$name"
                     mItemName?.text= name
                     if(item.material_efficiency!=null) mME?.text = "ME: "+item.material_efficiency.toString()
                     if(item.time_efficiency!=null) mTE?.text = "TE: "+item.time_efficiency.toString()

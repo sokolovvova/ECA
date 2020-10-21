@@ -14,7 +14,7 @@ interface EveEsiApi {
     fun getFirstPageOfContracts(@Path("regionId") regionId: Long?) : Call<List<ContractResponseModel>>
 
     @GET("{regionId}/?datasource=tranquility")
-    fun getContractsByPage(@Path("regionId") regionId: Long?, @Query("page") page: Int) : Observable<List<ContractResponseModel>>
+    fun getContractsByPage(@Path("regionId") regionId: Long?, @Query("page") page: Int) : Call<List<ContractResponseModel>>
 
     @GET("items/{contractId}/?datasource=tranquility&page=1")
     fun getItemListByContractId(@Path("contractId") contractId: Int?) : Call<List<ContractItemModel>>

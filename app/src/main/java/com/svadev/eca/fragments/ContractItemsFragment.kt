@@ -46,7 +46,7 @@ class ContractItemsFragment: Fragment() {
         model.selectedId.observe(viewLifecycleOwner){
             if(it!=0){
                 contract =
-                    if(model.datasource==1) ContractsDatabase.getInstance(context!!).contractsDao().getContractById(it)
+                    if(model.datasource.value==1) ContractsDatabase.getInstance(context!!).contractsDao().getContractById(it)
                     else SavedContractsDatabase.getInstance(context!!).contractsDao().getContractById(it)
                 viewTitle.text=contract.title
                 viewContractId.text="id: "+contract.contractId.toString()

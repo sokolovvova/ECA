@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="adMobAppId">ca-app-pub-7015375582758139~5274237787</string>
+    <string name="adMobNativeBannerId">ca-app-pub-7015375582758139/6395747767</string>
+    <string name="eveSSOClientId">a2654a47b0d24c77bac339cef1f9ec6a</string>
+    <string name="eveSSOBase64">YTI2NTRhNDdiMGQyNGM3N2JhYzMzOWNlZjFmOWVjNmE6RTRxVnI5S2Y2UE9sZXRkZWEyWDB5bGNiSXhKTG1mVDZjdFdwa0J5Vg==</string>
+</resources>

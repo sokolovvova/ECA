@@ -1,7 +1,6 @@
 package com.svadev.eca.fragments
 
 import android.os.Bundle
-import android.text.method.LinkMovementMethod
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,9 +8,9 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import com.svadev.eca.MainViewModel
 import com.svadev.eca.R
-import kotlinx.android.synthetic.main.about_fragment.view.*
+import kotlinx.android.synthetic.main.settings_fragment.view.*
 
-class AboutFragment: Fragment() {
+class SettingsFragment: Fragment() {
     private lateinit var model: MainViewModel
 
     override fun onCreateView(
@@ -19,16 +18,23 @@ class AboutFragment: Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.about_fragment,container,false)
+        val view = inflater.inflate(R.layout.settings_fragment,container,false)
 
         model = activity?.run {
             ViewModelProviders.of(this)[MainViewModel::class.java]
         } ?: throw Exception("Invalid Activity")
+        model.updateAuthCharacter()
 
-        model.changeTitle("About")
+        model.changeTitle("Settings")
 
-        view.ppLink.movementMethod = LinkMovementMethod.getInstance()
-        view.ccpLink.movementMethod = LinkMovementMethod.getInstance()
+        view.loginButton.setOnClickListener {
+            model.vmFragmentChanger(5)
+        }
+        model.authCharacterLd.observe(viewLifecycleOwner){
+            view.viewExpiresOn.text = it.ExpiresOn
+            view.viewCharacterName.text = it.CharacterName
+        }
+
 
         return view
     }

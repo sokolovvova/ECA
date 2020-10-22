@@ -29,6 +29,7 @@ class CLAdapter(private val myContractOnClickListener: ContractOnClickListener):
         contracts = finalContracts.toMutableList()
     }
     fun getContractId(position: Int): Int{
+
         val id = contracts[position].contractId
         if(id==null) return 0
         else return id

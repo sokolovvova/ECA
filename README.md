@@ -1,2 +1,2 @@
 # ECA
-App for getting public contracts for EVE Online
+Android app for work with contracts in EVE Online

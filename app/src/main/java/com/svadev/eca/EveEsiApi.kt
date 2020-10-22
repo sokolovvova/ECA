@@ -11,12 +11,12 @@ import retrofit2.http.Query
 interface EveEsiApi {
 
     @GET("{regionId}/?datasource=tranquility&page=1")
-    fun getFirstPageOfContracts(@Path("regionId") regionId: Long?) : Call<List<ContractResponseModel>>
+    fun getFirstPageOfContracts(@Path("regionId") link: String?,@Query("token") token: String="") : Call<List<ContractResponseModel>>
 
     @GET("{regionId}/?datasource=tranquility")
-    fun getContractsByPage(@Path("regionId") regionId: Long?, @Query("page") page: Int) : Call<List<ContractResponseModel>>
+    fun getContractsByPage(@Path("regionId") link: String?, @Query("page") page: Int,@Query("token") token: String="") : Call<List<ContractResponseModel>>
 
-    @GET("items/{contractId}/?datasource=tranquility&page=1")
-    fun getItemListByContractId(@Path("contractId") contractId: Int?) : Call<List<ContractItemModel>>
+    @GET("{contractId}/?datasource=tranquility&page=1")
+    fun getItemListByContractId(@Path("contractId") link: String?,@Query("token") token: String="") : Call<List<ContractItemModel>>
 
 }

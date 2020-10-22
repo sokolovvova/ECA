@@ -58,6 +58,8 @@ class ContractListFragment: Fragment(),CLAdapter.ContractOnClickListener {
             when(it){
                 1->model.changeTitle("Public contracts")
                 2->model.changeTitle("Saved contracts")
+                3->model.changeTitle("Char. Contracts")
+                4->model.changeTitle("Corp. contracts")
             }
         }
 

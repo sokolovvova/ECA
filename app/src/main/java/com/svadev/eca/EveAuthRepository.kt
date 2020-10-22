@@ -57,7 +57,6 @@ class EveAuthRepository(context: Context) {
                         firstResponse.token_type,
                         firstResponse.expires_in!!,
                         firstResponse.refresh_token
-
                     ))
                 }
             }

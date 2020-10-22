@@ -5,8 +5,14 @@
         android:title="Public contracts"
         android:icon="@drawable/ic_public_24"/>
     <item android:id="@+id/itemSavedContracts"
-        android:title="Saved Contracts"
+        android:title="Saved contracts"
         android:icon="@drawable/ic_star_24"/>
+    <item android:id="@+id/itemCharacterContract"
+        android:title="Char. contracts"
+        android:icon="@drawable/ic_person_24"/>
+    <item android:id="@+id/itemCorporationContract"
+        android:title="Corp. contracts"
+        android:icon="@drawable/ic_baseline_group_24"/>
     <item android:id="@+id/itemAbout"
         android:title="About"
         android:icon="@drawable/ic_baseline_info_24"/>

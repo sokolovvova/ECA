@@ -198,9 +198,7 @@ class MainActivity : AppCompatActivity() {
         }
         viewRegionTextView.setOnClickListener { viewRegionTextView.selectAll() }
         viewRefreshButton.setOnClickListener {
-            model.changeDataSource(1)
             showProgressBar(1)
-            model.vmFragmentChanger(1)
             model.updateContractList()
             viewRefreshButton.isEnabled=false
         }
@@ -340,22 +338,28 @@ class MainActivity : AppCompatActivity() {
             when(it.itemId){
                 R.id.itemPublicContracts -> {
                     showBottomElements(1)
-                   // viewToolbar.title = "Public contracts"
                     drawerLayout.closeDrawer(GravityCompat.START)
-                    model.changeDataSource(1)
                     showProgressBar(1)
-                    model.vmFragmentChanger(1)
-                    model.updateContractList()
+                    model.properlyChangeFragment(1)
                     true
                 }
                 R.id.itemSavedContracts -> {
                     showBottomElements(1)
                     showBottomElements(2)
-                  //  viewToolbar.title = "Saved contracts"
                     drawerLayout.closeDrawer(GravityCompat.START)
-                    model.changeDataSource(2)
-                    model.vmFragmentChanger(1)
-                    model.updateSavedDatabase()
+                    model.properlyChangeFragment(2)
+                    true
+                }
+                R.id.itemCharacterContract->{
+                    showBottomElements(1)
+                    drawerLayout.closeDrawer(GravityCompat.START)
+                    model.properlyChangeFragment(3)
+                    true
+                }
+                R.id.itemCorporationContract->{
+                    showBottomElements(1)
+                    drawerLayout.closeDrawer(GravityCompat.START)
+                    model.properlyChangeFragment(4)
                     true
                 }
                 R.id.itemAbout->{

@@ -46,8 +46,8 @@ class ContractItemsFragment: Fragment() {
         model.selectedId.observe(viewLifecycleOwner){
             if(it!=0){
                 contract =
-                    if(model.datasource.value==1) ContractsDatabase.getInstance(context!!).contractsDao().getContractById(it)
-                    else SavedContractsDatabase.getInstance(context!!).contractsDao().getContractById(it)
+                    if(model.datasource.value == 2 ) SavedContractsDatabase.getInstance(context!!).contractsDao().getContractById(it)
+                    else ContractsDatabase.getInstance(context!!).contractsDao().getContractById(it)
                 viewTitle.text=contract.title
                 viewContractId.text="id: "+contract.contractId.toString()
                 viewDateIssued.text=contract.dateIssued?.replace("T"," ",true)?.replace("Z"," ",true)
@@ -79,7 +79,7 @@ class ContractItemsFragment: Fragment() {
                 DrawableCompat.setTintList(DrawableCompat.wrap(fab.background),context?.getColorStateList(R.color.red))
                 fabOpen = true
             }
-        }
+        } //just open fab
         view.fabShare.setOnClickListener {
             if(this::contract.isInitialized){
                 val sendIntent: Intent = Intent().apply{
@@ -95,7 +95,7 @@ class ContractItemsFragment: Fragment() {
             fabShare.visibility = View.INVISIBLE
             DrawableCompat.setTintList(DrawableCompat.wrap(fab.background),context?.getColorStateList(R.color.colorPrimary))
             fabOpen = false
-        }
+        } //fab Share (use contract)
         model.savedContractListLD.observe(viewLifecycleOwner){
             isSaved = false
             for(item in it){

@@ -29,6 +29,32 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     val currentContractItems = contractsRepository.getCi()
     var savedContractListLD = savedDatabase.contractsDao().getAllContracts()
 
+
+    fun properlyChangeFragment(fragmentId: Int){
+        when(fragmentId){
+            1->{
+                changeDataSource(1)
+                vmFragmentChanger(1)
+                updateContractList()
+            }
+            2->{
+                changeDataSource(2)
+                vmFragmentChanger(1)
+                updateSavedDatabase()
+            }
+            3->{
+                changeDataSource(3)
+                vmFragmentChanger(1)
+                updateContractList()
+            }
+            4->{
+                changeDataSource(4)
+                vmFragmentChanger(1)
+                updateContractList()
+            }
+        }
+    }
+
     fun updateAuthCharacter(){
         authCharacterLd.postValue(prefProv.getAuthCharacter())
     }
@@ -42,10 +68,14 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     fun changeDataSource(sourceNumber: Int){
         when(sourceNumber){
             1-> {contractListLD = database.contractsDao().getAllContracts()
-                datasource.postValue(1)
+                datasource.value=1
             }
             2-> {contractListLD = savedDatabase.contractsDao().getAllContracts()
-                datasource.postValue(2)}
+                datasource.value=2}
+            3-> {contractListLD = database.contractsDao().getAllContracts()
+                datasource.value = 3 }
+            4-> {contractListLD = database.contractsDao().getAllContracts()
+                datasource.value = 4}
         }
     }
 
@@ -65,7 +95,12 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun updateContractList(){
-        contractsRepository.getContractList(selectedRegion.value)
+        when(datasource.value){
+            1->contractsRepository.getContractList(selectedRegion.value)
+            2->contractsRepository.getContractList(selectedRegion.value)
+            3->contractsRepository.getContractList(characterId = prefProv.getAuthCharacter().CharacterID,token =prefProv.getAuthCharacter().access_token!!)
+            4->contractsRepository.getContractList(characterId = prefProv.getAuthCharacter().CharacterID,token =prefProv.getAuthCharacter().access_token!!)
+        }
     }
 
     fun destroyThread(){

@@ -1,5 +1,6 @@
 package com.svadev.eca.adapters
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,6 +18,7 @@ class CLAdapter(private val myContractOnClickListener: ContractOnClickListener):
 
 
     fun updateContractList(newContracts : List<ContractModel>, sortBy: Int){
+        Log.d("Retrofit",newContracts.size.toString())
         var finalContracts = emptyList<ContractModel>()
         when(sortBy){
             1-> finalContracts = newContracts.sortedWith(compareBy { it.volume })

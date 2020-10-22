@@ -17,7 +17,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 @ObsoleteCoroutinesApi
 @Suppress("BlockingMethodInNonBlockingContext")
 class ContractsRepository(context: Context) {
-    private val eveApiUrl = "https://esi.evetech.net/latest/contracts/public/"
+    private val eveApiUrl = "https://esi.evetech.net/latest/"
     private val appContext = context
     private val scope = CoroutineScope(newFixedThreadPoolContext(4, "Background_Threads"))
     private var contractItems = MutableLiveData<List<ContractItemModel>>()
@@ -32,7 +32,11 @@ class ContractsRepository(context: Context) {
     }
 
     fun getContractItems(contractId: Int?) {
-        eveEsiApi.getItemListByContractId(contractId)
+        var link: String =""
+        if(contractId!=99){
+            link="contracts/public/items/$contractId"
+        }
+        eveEsiApi.getItemListByContractId(link,token = "")
             .enqueue(object : Callback<List<ContractItemModel>> {
                 override fun onResponse(
                     call: Call<List<ContractItemModel>>,
@@ -66,18 +70,27 @@ class ContractsRepository(context: Context) {
     }
 
 
-    fun getContractList(regionId: Long?) {
+    fun getContractList(regionId: Long?=99,corporationId: Int = 99,characterId:Long = 99,token: String ="99") {
         scope.launch {
+            var link: String =""
+            if(regionId!=99L){
+                link="contracts/public/$regionId"
+            }
+            else if (corporationId!=99){
+                link="corporations/999/contracts"
+            }
+            else link="characters/$characterId/contracts"
+
             val array = arrayListOf<ContractResponseModel>()
             try {
-                val response = eveEsiApi.getFirstPageOfContracts(regionId).execute()
+                val response = eveEsiApi.getFirstPageOfContracts(link,token).execute()
                 if (response.code() == 200) {
                     val pages = response.headers().get("x-pages")
                     array.addAll(response.body() as ArrayList<ContractResponseModel>)
                     pages?.let {
                         if (it.toInt() > 1) {
                             for (i in 2..it.toInt()) {
-                                val result = eveEsiApi.getContractsByPage(regionId, i).execute()
+                                val result = eveEsiApi.getContractsByPage(link, i,token).execute()
                                 array.addAll(result.body() as ArrayList<ContractResponseModel>)
                             }
                         }
@@ -111,7 +124,6 @@ class ContractsRepository(context: Context) {
                 ContractsDatabase.getInstance(appContext).contractsDao().deleteAllContracts()
                 ContractsDatabase.getInstance(appContext).contractsDao()
                     .insertAllContracts(convertCRMLtoCML(array.toList()))
-                Log.d("Retrofit", "Final Array Size ${array.size}")
             }
         }
     }

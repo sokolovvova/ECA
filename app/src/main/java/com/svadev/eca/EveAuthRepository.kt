@@ -24,23 +24,30 @@ class EveAuthRepository(context: Context) {
 
     private val eveAuthApi = retrofit.create(EveAuthApi::class.java)
 
+    fun updateToken(){
+        scope.launch {
+            val aT = "Basic $authBase64String"
+            val refToken = prefProv.getRefreshToken()
+            val request = AuthRequestBodyModel("refresh_token",refToken!!)
+            val response = eveAuthApi.getAccessToken(aT, request).execute()
+            if (response.code() == 200) {
+                val firstResponse = response.body()
+                prefProv.setAccessToken(firstResponse?.access_token!!)
+                prefProv.setExpTime(System.currentTimeMillis()+1_050_000)
+            }
+        }
+    }
+
 
     fun auth(authCode :String) {
         Log.d("Retrofit2","avoke")
         scope.launch {
-            Log.d("Retrofit2","courutine")
-
             val aT = "Basic $authBase64String"
             val request = AuthRequestBodyModel("authorization_code",authCode)
-            Log.d("Retrofit2",request.toString())
-
             val response = eveAuthApi.getAccessToken(aT, request).execute()
-            Log.d("Retrofit2",response.toString())
             if (response.code() == 200) {
-                Log.d("Retrofit2",response.body().toString()) //token
                 val firstResponse = response.body()
                 val accessToken = "Bearer ${firstResponse?.access_token}"
-                Log.d("Retrofit2",accessToken!!)
                 val response2 = eveAuthApi.getAuthCharInfo(accessToken!!).execute()
                 if(response2.code()==200){
                     Log.d("Retrofit2", response2.body()?.CharacterID.toString())
@@ -55,7 +62,7 @@ class EveAuthRepository(context: Context) {
                         secondResponse.IntellectualProperty,
                         firstResponse!!.access_token,
                         firstResponse.token_type,
-                        firstResponse.expires_in!!,
+                        System.currentTimeMillis()+1_050_000,
                         firstResponse.refresh_token
                     ))
                 }

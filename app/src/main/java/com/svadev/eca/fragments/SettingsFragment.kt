@@ -9,6 +9,9 @@ import androidx.lifecycle.ViewModelProviders
 import com.svadev.eca.MainViewModel
 import com.svadev.eca.R
 import kotlinx.android.synthetic.main.settings_fragment.view.*
+import java.text.SimpleDateFormat
+import java.time.ZoneOffset
+import java.time.format.DateTimeFormatter
 
 class SettingsFragment: Fragment() {
     private lateinit var model: MainViewModel
@@ -31,7 +34,8 @@ class SettingsFragment: Fragment() {
             model.vmFragmentChanger(5)
         }
         model.authCharacterLd.observe(viewLifecycleOwner){
-            view.viewExpiresOn.text = it.ExpiresOn
+            val formatter = SimpleDateFormat("dd/MM/yyyy hh:mm:ss");
+            view.viewExpiresOn.text = formatter.format(it.expires_in)
             view.viewCharacterName.text = it.CharacterName
         }
 

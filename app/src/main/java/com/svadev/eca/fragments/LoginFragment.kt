@@ -20,7 +20,7 @@ class LoginFragment : Fragment() {
     //eve sso auth
     private lateinit var clientId :String
     private val redirectUrl = "http://localhost/oauth-callback"
-    private val scopes = "esi-contracts.read_corporation_contracts.v1%20esi-contracts.read_character_contracts.v1"
+    private val scopes = "esi-contracts.read_corporation_contracts.v1%20esi-contracts.read_character_contracts.v1%20esi-universe.read_structures.v1"
 
     override fun onCreateView(
         inflater: LayoutInflater,

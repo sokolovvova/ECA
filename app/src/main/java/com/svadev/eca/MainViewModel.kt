@@ -95,9 +95,12 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun updateContractList(){
+        if(System.currentTimeMillis()>prefProv.getExpTime()){
+            eveAuthRepository.updateToken()
+        }
         when(datasource.value){
-            1->contractsRepository.getContractList(selectedRegion.value,status = 1)
-            2->contractsRepository.getContractList(selectedRegion.value,status = 1)
+            1->contractsRepository.getContractList(selectedRegion.value,status = 1,token =prefProv.getAuthCharacter().access_token!!)
+            2->contractsRepository.getContractList(selectedRegion.value,status = 1,token =prefProv.getAuthCharacter().access_token!!)
             3->contractsRepository.getContractList(characterId = prefProv.getAuthCharacter().CharacterID,token =prefProv.getAuthCharacter().access_token!!,status = 3)
             4->contractsRepository.getContractList(characterId = prefProv.getAuthCharacter().CharacterID,token =prefProv.getAuthCharacter().access_token!!,status = 4)
         }
@@ -111,6 +114,9 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun getContractData(){
+        if(System.currentTimeMillis()>prefProv.getExpTime()){
+            eveAuthRepository.updateToken()
+        }
         contractsRepository.getContractItems(selectedId.value,characterId = prefProv.getAuthCharacter().CharacterID,token =prefProv.getAuthCharacter().access_token!!)
     }
     fun clearCurrentContractItems(){

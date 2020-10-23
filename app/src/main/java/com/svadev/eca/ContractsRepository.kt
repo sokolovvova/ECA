@@ -5,8 +5,10 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
 import com.svadev.eca.db.ContractsDatabase
+import com.svadev.eca.db.EveSdaDatabase
 import com.svadev.eca.models.ContractItemModel
 import com.svadev.eca.models.ContractResponseModel
+import com.svadev.eca.models.StaStationsModel
 import kotlinx.coroutines.*
 import retrofit2.Call
 import retrofit2.Callback
@@ -122,7 +124,7 @@ class ContractsRepository(context: Context) {
                 } else {
                     array.add(
                         ContractResponseModel(
-                            title = "An error occurred",
+                            title = "[An error occurred ${response.code()}]",
                             contract_id = 0,
                             type="item_exchange"
                         )
@@ -138,6 +140,22 @@ class ContractsRepository(context: Context) {
                     )
                 )
             } finally {
+                val dbDao = EveSdaDatabase.getInstance(appContext).eveSdaDao()
+                val filledArray = dbDao.getAllIds() as ArrayList
+                for(n in array){
+                    if(n.start_location_id!=null&&n.start_location_id>10000000000 && n.start_location_id !in filledArray){
+                        n.start_location_id?.let{
+                            val sta = eveEsiApi.getStructureNameById(n.start_location_id,token).execute()
+                            filledArray.add(n.start_location_id)
+                            if(sta.code()==200){
+                                dbDao.putStation(
+                                    StaStationsModel(n.start_location_id,0.0,sta.body()?.name)
+                                )
+                            }
+                            Log.d("Lol","${sta.code()}    ${n.start_location_id}  ${sta.body()?.name}  $token")
+                        }
+                    }
+                }
                 ContractsDatabase.getInstance(appContext).contractsDao().deleteAllContracts()
                 ContractsDatabase.getInstance(appContext).contractsDao()
                     .insertAllContracts(convertCRMLtoCML(array.toList()))

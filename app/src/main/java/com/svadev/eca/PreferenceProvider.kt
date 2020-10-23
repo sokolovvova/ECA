@@ -21,7 +21,7 @@ class PreferenceProvider(context: Context) {
             .putString("IntellectualProperty", character.IntellectualProperty)
             .putString("access_token", character.access_token)
             .putString("token_type", character.token_type)
-            .putInt("expires_in", character.expires_in)
+            .putLong("expires_in", character.expires_in)
             .putString("refresh_token", character.refresh_token)
             .apply()
     }
@@ -37,8 +37,18 @@ class PreferenceProvider(context: Context) {
             preference.getString("IntellectualProperty",""),
             preference.getString("access_token",""),
             preference.getString("token_type",""),
-            preference.getInt("expires_in",0),
+            preference.getLong("expires_in",0),
             preference.getString("refresh_token",""),
         )
+    }
+
+    fun getRefreshToken() = preference.getString("refresh_token","")
+
+    fun setAccessToken(accessToken: String){
+        preference.edit().putString("access_token", accessToken).apply()
+    }
+    fun getExpTime() = preference.getLong("expires_in",0)
+    fun setExpTime(newTime: Long){
+        preference.edit().putLong("expires_in", newTime).apply()
     }
 }

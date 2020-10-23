@@ -3,6 +3,7 @@ package com.svadev.eca
 import com.svadev.eca.models.CharacterInfoResponseModel
 import com.svadev.eca.models.ContractItemModel
 import com.svadev.eca.models.ContractResponseModel
+import com.svadev.eca.models.StructureResponseModel
 import io.reactivex.rxjava3.core.Observable
 import retrofit2.Call
 import retrofit2.http.GET
@@ -22,5 +23,8 @@ interface EveEsiApi {
 
     @GET("characters/{characterId}/?datasource=tranquility")
     fun getCharacterContractId(@Path("characterId") characterId: Long?) :Call<CharacterInfoResponseModel>
+
+    @GET("universe/structures/{structureId}/?datasource=tranquility")
+    fun getStructureNameById(@Path("structureId") structureId: Long?,@Query("token") token: String="") : Call<StructureResponseModel>
 
 }

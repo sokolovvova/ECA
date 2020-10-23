@@ -60,7 +60,7 @@ class ItemsAdapter: RecyclerView.Adapter<ItemsAdapter.ItemsViewHolder>() {
         fun bind(item: ContractItemModel){
             when(item.type_id){
                 1090000->{
-                    mItemName?.text = "some error during connection"
+                    mItemName?.text = "some error"
                 }
                 1090001->{
                     mItemName?.text = "error[400] Contract not found!"

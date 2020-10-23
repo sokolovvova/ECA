@@ -31,18 +31,20 @@ class ContractsRepository(context: Context) {
         return contractItems
     }
 
-    fun getContractItems(contractId: Int?) {
+    fun getContractItems(contractId: Int?,characterId: Long?,token: String ="99") {
         var link: String =""
         if(contractId!=99){
             link="contracts/public/items/$contractId"
         }
-        eveEsiApi.getItemListByContractId(link,token = "")
+        eveEsiApi.getItemListByContractId(link,token)
             .enqueue(object : Callback<List<ContractItemModel>> {
                 override fun onResponse(
                     call: Call<List<ContractItemModel>>,
                     response: Response<List<ContractItemModel>>
                 ) {
                     scope.launch {
+                        Log.d("Requests","second $link")
+                        Log.d("Requests","first ${response.code().toString()}")
                         when (response.code()) {
                             200 -> {
                                 contractItems.postValue(response.body())
@@ -51,7 +53,20 @@ class ContractsRepository(context: Context) {
                                 contractItems.postValue(listOf(ContractItemModel(type_id = 1090001 )))
                             }
                             403 -> {
-                                contractItems.postValue(listOf(ContractItemModel(type_id = 1090003)))
+                                val link2 = "characters/$characterId/contracts/$contractId/items"
+                                val secondTry = eveEsiApi.getItemListByContractId(link2,token).execute()
+                                Log.d("Requests","second $link2")
+                                Log.d("Requests","second ${secondTry.code().toString()}")
+                                if(secondTry.code()==200) contractItems.postValue(secondTry.body())
+                                else {
+                                    val corpId = eveEsiApi.getCharacterContractId(characterId).execute().body()?.corporation_id
+                                    val link3 = "corporations/$corpId/contracts/$contractId/items"
+                                    val thirdTry = eveEsiApi.getItemListByContractId(link3,token).execute()
+                                    Log.d("Requests","second $link3")
+                                    Log.d("Requests","third ${thirdTry.code().toString()}")
+                                    if(thirdTry.code()==200) contractItems.postValue(thirdTry.body())
+                                    else contractItems.postValue(listOf(ContractItemModel(type_id = 1090003)))
+                                }
                             }
                             else -> {
                                 contractItems.postValue(listOf(ContractItemModel(type_id = 1090000)))
@@ -70,17 +85,19 @@ class ContractsRepository(context: Context) {
     }
 
 
-    fun getContractList(regionId: Long?=99,corporationId: Int = 99,characterId:Long = 99,token: String ="99") {
+    fun getContractList(regionId: Long?=99,status: Int = 0,characterId:Long = 99,token: String ="99") {
         scope.launch {
             var link: String =""
-            if(regionId!=99L){
-                link="contracts/public/$regionId"
+            when(status){
+                1->link="contracts/public/$regionId"
+                3->{
+                    link="characters/$characterId/contracts"
+                }
+                4->{
+                    val corpId = eveEsiApi.getCharacterContractId(characterId).execute().body()?.corporation_id
+                    link="corporations/$corpId/contracts"
+                }
             }
-            else if (corporationId!=99){
-                link="corporations/999/contracts"
-            }
-            else link="characters/$characterId/contracts"
-
             val array = arrayListOf<ContractResponseModel>()
             try {
                 val response = eveEsiApi.getFirstPageOfContracts(link,token).execute()

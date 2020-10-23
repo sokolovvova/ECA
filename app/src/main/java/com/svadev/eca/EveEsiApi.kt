@@ -1,5 +1,6 @@
 package com.svadev.eca
 
+import com.svadev.eca.models.CharacterInfoResponseModel
 import com.svadev.eca.models.ContractItemModel
 import com.svadev.eca.models.ContractResponseModel
 import io.reactivex.rxjava3.core.Observable
@@ -18,5 +19,8 @@ interface EveEsiApi {
 
     @GET("{contractId}/?datasource=tranquility&page=1")
     fun getItemListByContractId(@Path("contractId") link: String?,@Query("token") token: String="") : Call<List<ContractItemModel>>
+
+    @GET("characters/{characterId}/?datasource=tranquility")
+    fun getCharacterContractId(@Path("characterId") characterId: Long?) :Call<CharacterInfoResponseModel>
 
 }

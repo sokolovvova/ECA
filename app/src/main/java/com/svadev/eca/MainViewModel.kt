@@ -96,10 +96,10 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     fun updateContractList(){
         when(datasource.value){
-            1->contractsRepository.getContractList(selectedRegion.value)
-            2->contractsRepository.getContractList(selectedRegion.value)
-            3->contractsRepository.getContractList(characterId = prefProv.getAuthCharacter().CharacterID,token =prefProv.getAuthCharacter().access_token!!)
-            4->contractsRepository.getContractList(characterId = prefProv.getAuthCharacter().CharacterID,token =prefProv.getAuthCharacter().access_token!!)
+            1->contractsRepository.getContractList(selectedRegion.value,status = 1)
+            2->contractsRepository.getContractList(selectedRegion.value,status = 1)
+            3->contractsRepository.getContractList(characterId = prefProv.getAuthCharacter().CharacterID,token =prefProv.getAuthCharacter().access_token!!,status = 3)
+            4->contractsRepository.getContractList(characterId = prefProv.getAuthCharacter().CharacterID,token =prefProv.getAuthCharacter().access_token!!,status = 4)
         }
     }
 
@@ -111,7 +111,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun getContractData(){
-        contractsRepository.getContractItems(selectedId.value)
+        contractsRepository.getContractItems(selectedId.value,characterId = prefProv.getAuthCharacter().CharacterID,token =prefProv.getAuthCharacter().access_token!!)
     }
     fun clearCurrentContractItems(){
         currentContractItems.postValue(emptyList())

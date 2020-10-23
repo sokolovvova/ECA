@@ -10,7 +10,7 @@ fun convertCRMLtoCML(list :List<ContractResponseModel>?): List<ContractModel>{
     if(list==null) return newList
     else{
         for(i in 0..list.lastIndex){
-            if(list[i].type=="item_exchange"){
+            if(list[i].type=="item_exchange" && list[i].status!="deleted"){
                 newList.add(
                     ContractModel(
                         contractId = list[i].contract_id,

@@ -17,5 +17,6 @@ class ContractResponseModel (
     val start_location_id: Long? = null,
     val title: String? = null,
     val type: String? = null,
-    val volume: Double? = null
+    val volume: Double? = null,
+    val status: String? = null,
     )

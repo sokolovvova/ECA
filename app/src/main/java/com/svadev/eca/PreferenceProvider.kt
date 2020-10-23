@@ -51,4 +51,7 @@ class PreferenceProvider(context: Context) {
     fun setExpTime(newTime: Long){
         preference.edit().putLong("expires_in", newTime).apply()
     }
+    fun setRefreshToken(newRT: String){
+        preference.edit().putString("refresh_token",newRT).apply()
+    }
 }

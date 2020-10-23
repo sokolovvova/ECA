@@ -176,7 +176,6 @@ class MainActivity : AppCompatActivity() {
             }
             .build()
 
-
         supportFragmentManager.beginTransaction().add(
             R.id.mainFragmentContainer,
             ContractListFragment()

@@ -38,8 +38,6 @@ class SettingsFragment: Fragment() {
             view.viewExpiresOn.text = formatter.format(it.expires_in)
             view.viewCharacterName.text = it.CharacterName
         }
-
-
         return view
     }
 }

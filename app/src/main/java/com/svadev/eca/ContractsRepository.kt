@@ -33,40 +33,44 @@ class ContractsRepository(context: Context) {
         return contractItems
     }
 
-    fun getContractItems(contractId: Int?,characterId: Long?,token: String ="99") {
-        var link: String =""
-        if(contractId!=99){
-            link="contracts/public/items/$contractId"
+    fun getContractItems(contractId: Int?, characterId: Long?, token: String = "99") {
+        var link: String = ""
+        if (contractId != 99) {
+            link = "contracts/public/items/$contractId"
         }
-        eveEsiApi.getItemListByContractId(link,token)
+        eveEsiApi.getItemListByContractId(link, token)
             .enqueue(object : Callback<List<ContractItemModel>> {
                 override fun onResponse(
                     call: Call<List<ContractItemModel>>,
                     response: Response<List<ContractItemModel>>
                 ) {
                     scope.launch {
-                        Log.d("Requests","second $link")
-                        Log.d("Requests","first ${response.code().toString()}")
+                        Log.d("Requests", "second $link")
+                        Log.d("Requests", "first ${response.code().toString()}")
                         when (response.code()) {
                             200 -> {
                                 contractItems.postValue(response.body())
                             }
                             400 -> {
-                                contractItems.postValue(listOf(ContractItemModel(type_id = 1090001 )))
+                                contractItems.postValue(listOf(ContractItemModel(type_id = 1090001)))
                             }
                             403 -> {
                                 val link2 = "characters/$characterId/contracts/$contractId/items"
-                                val secondTry = eveEsiApi.getItemListByContractId(link2,token).execute()
-                                Log.d("Requests","second $link2")
-                                Log.d("Requests","second ${secondTry.code().toString()}")
-                                if(secondTry.code()==200) contractItems.postValue(secondTry.body())
+                                val secondTry =
+                                    eveEsiApi.getItemListByContractId(link2, token).execute()
+                                Log.d("Requests", "second $link2")
+                                Log.d("Requests", "second ${secondTry.code().toString()}")
+                                if (secondTry.code() == 200) contractItems.postValue(secondTry.body())
                                 else {
-                                    val corpId = eveEsiApi.getCharacterContractId(characterId).execute().body()?.corporation_id
+                                    val corpId =
+                                        eveEsiApi.getCharacterContractId(characterId).execute()
+                                            .body()?.corporation_id
                                     val link3 = "corporations/$corpId/contracts/$contractId/items"
-                                    val thirdTry = eveEsiApi.getItemListByContractId(link3,token).execute()
-                                    Log.d("Requests","second $link3")
-                                    Log.d("Requests","third ${thirdTry.code().toString()}")
-                                    if(thirdTry.code()==200) contractItems.postValue(thirdTry.body())
+                                    val thirdTry =
+                                        eveEsiApi.getItemListByContractId(link3, token).execute()
+                                    Log.d("Requests", "second $link3")
+                                    Log.d("Requests", "third ${thirdTry.code().toString()}")
+                                    if (thirdTry.code() == 200) contractItems.postValue(thirdTry.body())
                                     else contractItems.postValue(listOf(ContractItemModel(type_id = 1090003)))
                                 }
                             }
@@ -87,29 +91,35 @@ class ContractsRepository(context: Context) {
     }
 
 
-    fun getContractList(regionId: Long?=99,status: Int = 0,characterId:Long = 99,token: String ="99") {
+    fun getContractList(
+        regionId: Long? = 99,
+        status: Int = 0,
+        characterId: Long = 99,
+        token: String = "99"
+    ) {
         scope.launch {
-            var link: String =""
-            when(status){
-                1->link="contracts/public/$regionId"
-                3->{
-                    link="characters/$characterId/contracts"
+            var link: String = ""
+            when (status) {
+                1 -> link = "contracts/public/$regionId"
+                3 -> {
+                    link = "characters/$characterId/contracts"
                 }
-                4->{
-                    val corpId = eveEsiApi.getCharacterContractId(characterId).execute().body()?.corporation_id
-                    link="corporations/$corpId/contracts"
+                4 -> {
+                    val corpId = eveEsiApi.getCharacterContractId(characterId).execute()
+                        .body()?.corporation_id
+                    link = "corporations/$corpId/contracts"
                 }
             }
             val array = arrayListOf<ContractResponseModel>()
             try {
-                val response = eveEsiApi.getFirstPageOfContracts(link,token).execute()
+                val response = eveEsiApi.getFirstPageOfContracts(link, token).execute()
                 if (response.code() == 200) {
                     val pages = response.headers().get("x-pages")
                     array.addAll(response.body() as ArrayList<ContractResponseModel>)
                     pages?.let {
                         if (it.toInt() > 1) {
                             for (i in 2..it.toInt()) {
-                                val result = eveEsiApi.getContractsByPage(link, i,token).execute()
+                                val result = eveEsiApi.getContractsByPage(link, i, token).execute()
                                 array.addAll(result.body() as ArrayList<ContractResponseModel>)
                             }
                         }
@@ -118,15 +128,15 @@ class ContractsRepository(context: Context) {
                         ContractResponseModel(
                             title = "Contracts not found!",
                             contract_id = 0,
-                            type="item_exchange"
+                            type = "item_exchange"
                         )
                     )
                 } else {
                     array.add(
                         ContractResponseModel(
-                            title = "[An error occurred ${response.code()}]",
+                            title = "[Error ${response.code()} ] (403-> Try to login again)",
                             contract_id = 0,
-                            type="item_exchange"
+                            type = "item_exchange"
                         )
                     )
                 }
@@ -136,23 +146,23 @@ class ContractsRepository(context: Context) {
                     ContractResponseModel(
                         title = "An error occurred",
                         contract_id = 0,
-                        type="item_exchange"
+                        type = "item_exchange"
                     )
                 )
             } finally {
                 val dbDao = EveSdaDatabase.getInstance(appContext).eveSdaDao()
                 val filledArray = dbDao.getAllIds() as ArrayList
-                for(n in array){
-                    if(n.start_location_id!=null&&n.start_location_id>10000000000 && n.start_location_id !in filledArray){
-                        n.start_location_id?.let{
-                            val sta = eveEsiApi.getStructureNameById(n.start_location_id,token).execute()
+                for (n in array) {
+                    if (n.start_location_id != null && n.start_location_id > 10000000000 && n.start_location_id !in filledArray) {
+                        n.start_location_id?.let {
+                            val sta =
+                                eveEsiApi.getStructureNameById(n.start_location_id, token).execute()
                             filledArray.add(n.start_location_id)
-                            if(sta.code()==200){
+                            if (sta.code() == 200) {
                                 dbDao.putStation(
-                                    StaStationsModel(n.start_location_id,0.0,sta.body()?.name)
+                                    StaStationsModel(n.start_location_id, 0.0, sta.body()?.name)
                                 )
                             }
-                            Log.d("Lol","${sta.code()}    ${n.start_location_id}  ${sta.body()?.name}  $token")
                         }
                     }
                 }

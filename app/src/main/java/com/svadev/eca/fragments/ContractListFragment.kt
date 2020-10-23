@@ -51,6 +51,7 @@ class ContractListFragment: Fragment(),CLAdapter.ContractOnClickListener {
                 sortOrder=it
                 model.updateContractList()
                 model.updateSavedDatabase()
+                if(model.datasource.value==2) (activity as MainActivity).showProgressBar(0)
             }
         }
 

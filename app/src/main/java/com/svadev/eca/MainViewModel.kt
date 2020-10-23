@@ -1,6 +1,7 @@
 package com.svadev.eca
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import com.svadev.eca.db.ContractsDatabase
@@ -17,7 +18,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     var datasource = MutableLiveData(1)
     var sortOrder = MutableLiveData<Int>(5)
     var title = MutableLiveData("Public Contracts")
-    val eveAuthToken = MutableLiveData<String>("")
+    private val eveAuthToken = MutableLiveData<String>("")
     private val prefProv = PreferenceProvider(application)
     val authCharacterLd = MutableLiveData(AuthCharacterModel())
     var savedDatabase = SavedContractsDatabase.getInstance(application)
@@ -29,6 +30,9 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     val currentContractItems = contractsRepository.getCi()
     var savedContractListLD = savedDatabase.contractsDao().getAllContracts()
 
+    fun updateToken(){
+        eveAuthRepository.updateToken()
+    }
 
     fun properlyChangeFragment(fragmentId: Int){
         when(fragmentId){
@@ -65,7 +69,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         eveAuthRepository.auth(str)
     }
 
-    fun changeDataSource(sourceNumber: Int){
+    private fun changeDataSource(sourceNumber: Int){
         when(sourceNumber){
             1-> {contractListLD = database.contractsDao().getAllContracts()
                 datasource.value=1
@@ -95,12 +99,13 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun updateContractList(){
+        Log.d("times","${System.currentTimeMillis()}  x   ${prefProv.getExpTime()}")
         if(System.currentTimeMillis()>prefProv.getExpTime()){
             eveAuthRepository.updateToken()
         }
         when(datasource.value){
             1->contractsRepository.getContractList(selectedRegion.value,status = 1,token =prefProv.getAuthCharacter().access_token!!)
-            2->contractsRepository.getContractList(selectedRegion.value,status = 1,token =prefProv.getAuthCharacter().access_token!!)
+            2->updateSavedDatabase()
             3->contractsRepository.getContractList(characterId = prefProv.getAuthCharacter().CharacterID,token =prefProv.getAuthCharacter().access_token!!,status = 3)
             4->contractsRepository.getContractList(characterId = prefProv.getAuthCharacter().CharacterID,token =prefProv.getAuthCharacter().access_token!!,status = 4)
         }
@@ -114,6 +119,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun getContractData(){
+        Log.d("times","${System.currentTimeMillis()}  x   ${prefProv.getExpTime()}")
         if(System.currentTimeMillis()>prefProv.getExpTime()){
             eveAuthRepository.updateToken()
         }

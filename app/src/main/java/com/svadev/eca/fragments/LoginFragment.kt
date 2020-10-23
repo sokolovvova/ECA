@@ -21,6 +21,8 @@ class LoginFragment : Fragment() {
     private lateinit var clientId :String
     private val redirectUrl = "http://localhost/oauth-callback"
     private val scopes = "esi-contracts.read_corporation_contracts.v1%20esi-contracts.read_character_contracts.v1%20esi-universe.read_structures.v1"
+    private lateinit var codeChallenge :String
+    private val state ="random_string"
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -30,6 +32,7 @@ class LoginFragment : Fragment() {
         val view = inflater.inflate(R.layout.login_fragment, container, false)
 
         clientId = getString(R.string.eveSSOClientId)
+        codeChallenge = getString(R.string.codeChallenge)
         model = activity?.run {
             ViewModelProviders.of(this)[MainViewModel::class.java]
         } ?: throw Exception("Invalid Activity")
@@ -38,12 +41,13 @@ class LoginFragment : Fragment() {
 
 
         view.webView.settings.javaScriptEnabled = true
-        view.webView.loadUrl("https://login.eveonline.com/oauth/authorize?response_type=code&redirect_uri=$redirectUrl&client_id=$clientId&scope=$scopes")
+        view.webView.loadUrl("https://login.eveonline.com/v2/oauth/authorize/?response_type=code&redirect_uri=$redirectUrl&client_id=$clientId&scope=$scopes&code_challenge=$codeChallenge&code_challenge_method=S256&state=$state")
         view.webView.webViewClient = object : WebViewClient() {
             override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
                 if (url !== null) {
                     if (url.contains("code=")) {
-                        val newUrl = url.replace("$redirectUrl?code=", "")
+                        var newUrl = url.replace("$redirectUrl?code=", "")
+                        newUrl = newUrl.replace("&state=random_string", "")
                         model.setEveAuthToken(newUrl)
                         (activity as MainActivity).showProgressBar(0)
                         model.vmFragmentChanger(4)

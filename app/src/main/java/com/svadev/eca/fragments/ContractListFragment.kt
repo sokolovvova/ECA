@@ -30,7 +30,6 @@ class ContractListFragment: Fragment(),CLAdapter.ContractOnClickListener {
     ): View? {
         val view = inflater.inflate(R.layout.contract_list_fragment,container,false)
 
-
         cLAdapter = CLAdapter(this)
 
         recyclerView = view.contractsRV.apply {

@@ -22,8 +22,6 @@ class ItemsAdapter: RecyclerView.Adapter<ItemsAdapter.ItemsViewHolder>() {
         items=newIL.toMutableList()
     }
 
-
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemsViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         return ItemsViewHolder(inflater,parent)
@@ -34,7 +32,7 @@ class ItemsAdapter: RecyclerView.Adapter<ItemsAdapter.ItemsViewHolder>() {
         holder.bind(item)
     }
 
-    override fun getItemCount(): Int =items.size
+    override fun getItemCount() = items.size
 
     class ItemsViewHolder(inflater: LayoutInflater, parent: ViewGroup) : RecyclerView.ViewHolder(inflater.inflate(R.layout.item_list_item,parent,false)){
         private var mItemName: TextView?=null

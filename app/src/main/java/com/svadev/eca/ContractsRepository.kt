@@ -1,7 +1,6 @@
 package com.svadev.eca
 
 import android.content.Context
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
 import com.svadev.eca.db.ContractsDatabase
@@ -45,8 +44,6 @@ class ContractsRepository(context: Context) {
                     response: Response<List<ContractItemModel>>
                 ) {
                     scope.launch {
-                        Log.d("Requests", "second $link")
-                        Log.d("Requests", "first ${response.code().toString()}")
                         when (response.code()) {
                             200 -> {
                                 contractItems.postValue(response.body())
@@ -58,8 +55,6 @@ class ContractsRepository(context: Context) {
                                 val link2 = "characters/$characterId/contracts/$contractId/items"
                                 val secondTry =
                                     eveEsiApi.getItemListByContractId(link2, token).execute()
-                                Log.d("Requests", "second $link2")
-                                Log.d("Requests", "second ${secondTry.code().toString()}")
                                 if (secondTry.code() == 200) contractItems.postValue(secondTry.body())
                                 else {
                                     val corpId =
@@ -68,8 +63,6 @@ class ContractsRepository(context: Context) {
                                     val link3 = "corporations/$corpId/contracts/$contractId/items"
                                     val thirdTry =
                                         eveEsiApi.getItemListByContractId(link3, token).execute()
-                                    Log.d("Requests", "second $link3")
-                                    Log.d("Requests", "third ${thirdTry.code().toString()}")
                                     if (thirdTry.code() == 200) contractItems.postValue(thirdTry.body())
                                     else contractItems.postValue(listOf(ContractItemModel(type_id = 1090003)))
                                 }

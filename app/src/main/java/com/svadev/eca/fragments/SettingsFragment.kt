@@ -27,9 +27,7 @@ class SettingsFragment: Fragment() {
             ViewModelProviders.of(this)[MainViewModel::class.java]
         } ?: throw Exception("Invalid Activity")
         model.updateAuthCharacter()
-
         model.changeTitle("Settings")
-
         view.loginButton.setOnClickListener {
             model.vmFragmentChanger(5)
         }

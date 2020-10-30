@@ -1,7 +1,6 @@
 package com.svadev.eca
 
 import android.app.Application
-import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import com.svadev.eca.db.ContractsDatabase
@@ -30,28 +29,24 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     val currentContractItems = contractsRepository.getCi()
     var savedContractListLD = savedDatabase.contractsDao().getAllContracts()
 
-    fun updateToken(){
-        eveAuthRepository.updateToken()
-    }
-
-    fun properlyChangeFragment(fragmentId: Int){
-        when(fragmentId){
-            1->{
+    fun properlyChangeFragment(fragmentId: Int) {
+        when (fragmentId) {
+            1 -> {
                 changeDataSource(1)
                 vmFragmentChanger(1)
                 updateContractList()
             }
-            2->{
+            2 -> {
                 changeDataSource(2)
                 vmFragmentChanger(1)
                 updateSavedDatabase()
             }
-            3->{
+            3 -> {
                 changeDataSource(3)
                 vmFragmentChanger(1)
                 updateContractList()
             }
-            4->{
+            4 -> {
                 changeDataSource(4)
                 vmFragmentChanger(1)
                 updateContractList()
@@ -59,85 +54,126 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    fun updateAuthCharacter(){
+    fun updateAuthCharacter() {
         authCharacterLd.postValue(prefProv.getAuthCharacter())
     }
 
 
-    fun setEveAuthToken(str: String){
+    fun setEveAuthToken(str: String) {
         eveAuthToken.postValue(str)
         eveAuthRepository.auth(str)
     }
 
-    private fun changeDataSource(sourceNumber: Int){
-        when(sourceNumber){
-            1-> {contractListLD = database.contractsDao().getAllContracts()
-                datasource.value=1
+    private fun changeDataSource(sourceNumber: Int) {
+        when (sourceNumber) {
+            1 -> {
+                contractListLD = database.contractsDao().getAllContracts()
+                datasource.value = 1
             }
-            2-> {contractListLD = savedDatabase.contractsDao().getAllContracts()
-                datasource.value=2}
-            3-> {contractListLD = database.contractsDao().getAllContracts()
-                datasource.value = 3 }
-            4-> {contractListLD = database.contractsDao().getAllContracts()
-                datasource.value = 4}
+            2 -> {
+                contractListLD = savedDatabase.contractsDao().getAllContracts()
+                datasource.value = 2
+            }
+            3 -> {
+                contractListLD = database.contractsDao().getAllContracts()
+                datasource.value = 3
+            }
+            4 -> {
+                contractListLD = database.contractsDao().getAllContracts()
+                datasource.value = 4
+            }
         }
     }
 
-    fun changeTitle(str:String){
+    fun changeTitle(str: String) {
         title.postValue(str)
     }
 
-    fun setNewSortOrder(n: Int){
+    fun setNewSortOrder(n: Int) {
         sortOrder.postValue(n)
     }
 
-    fun setNewRegion(n : Long){
+    fun setNewRegion(n: Long) {
         selectedRegion.postValue(n)
     }
-    fun vmFragmentChanger(num : Int){
+
+    fun vmFragmentChanger(num: Int) {
         currentFragment.postValue(num)
     }
 
-    fun updateContractList(){
-        Log.d("times","${System.currentTimeMillis()}  x   ${prefProv.getExpTime()}")
-        if(System.currentTimeMillis()>prefProv.getExpTime()){
+    fun updateContractList() {
+        if (System.currentTimeMillis() > prefProv.getExpTime()) {
             eveAuthRepository.updateToken()
         }
-        when(datasource.value){
-            1->contractsRepository.getContractList(selectedRegion.value,status = 1,token =prefProv.getAuthCharacter().access_token!!)
-            2->updateSavedDatabase()
-            3->contractsRepository.getContractList(characterId = prefProv.getAuthCharacter().CharacterID,token =prefProv.getAuthCharacter().access_token!!,status = 3)
-            4->contractsRepository.getContractList(characterId = prefProv.getAuthCharacter().CharacterID,token =prefProv.getAuthCharacter().access_token!!,status = 4)
+        when (datasource.value) {
+            1 -> contractsRepository.getContractList(
+                selectedRegion.value,
+                status = 1,
+                token = prefProv.getAuthCharacter().access_token!!
+            )
+            2 -> updateSavedDatabase()
+            3 -> contractsRepository.getContractList(
+                characterId = prefProv.getAuthCharacter().CharacterID,
+                token = prefProv.getAuthCharacter().access_token!!,
+                status = 3
+            )
+            4 -> contractsRepository.getContractList(
+                characterId = prefProv.getAuthCharacter().CharacterID,
+                token = prefProv.getAuthCharacter().access_token!!,
+                status = 4
+            )
         }
     }
 
-    fun destroyThread(){
+    fun destroyThread() {
         contractsRepository.stopMultiThreadWork()
     }
-    fun setNewCurrentContractId(i: Int){
+
+    fun setNewCurrentContractId(i: Int) {
         selectedId.postValue(i)
     }
 
-    fun getContractData(){
-        Log.d("times","${System.currentTimeMillis()}  x   ${prefProv.getExpTime()}")
-        if(System.currentTimeMillis()>prefProv.getExpTime()){
+    fun getContractData() {
+        if (System.currentTimeMillis() > prefProv.getExpTime()) {
             eveAuthRepository.updateToken()
         }
-        contractsRepository.getContractItems(selectedId.value,characterId = prefProv.getAuthCharacter().CharacterID,token =prefProv.getAuthCharacter().access_token!!)
+        contractsRepository.getContractItems(
+            selectedId.value,
+            characterId = prefProv.getAuthCharacter().CharacterID,
+            token = prefProv.getAuthCharacter().access_token!!
+        )
     }
-    fun clearCurrentContractItems(){
+
+    fun clearCurrentContractItems() {
         currentContractItems.postValue(emptyList())
     }
 
-    fun saveContract(contract: ContractModel){
-       savedDatabase.contractsDao().saveContract(contract)
+    fun saveContract(contract: ContractModel) {
+        savedDatabase.contractsDao().saveContract(contract)
     }
 
-    fun removeSavedContract(id: Int){
+    fun removeSavedContract(id: Int) {
         savedDatabase.contractsDao().deleteContractById(id)
     }
-    fun updateSavedDatabase(){
-        savedDatabase.contractsDao().saveContract(ContractModel(contractId = 99999,null,null,null,null,null,null,null,null,null,null,null,null))
+
+    fun updateSavedDatabase() {
+        savedDatabase.contractsDao().saveContract(
+            ContractModel(
+                contractId = 99999,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+            )
+        )
         savedDatabase.contractsDao().deleteContractById(99999)
     }
 }

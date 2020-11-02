@@ -1,5 +1,7 @@
 package com.svadev.eca.adapters
 
+import android.content.Context
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,7 +14,7 @@ import com.svadev.eca.stationIdToName
 import com.svadev.eca.volumeToString
 import kotlinx.android.synthetic.main.contract_list_item.view.*
 
-class CLAdapter(private val myContractOnClickListener: ContractOnClickListener) :
+class CLAdapter(private val myContractOnClickListener: ContractOnClickListener,val context: Context) :
     RecyclerView.Adapter<CLAdapter.CLViewHolder>() {
     private var contracts = emptyList<ContractModel>()
 
@@ -84,6 +86,11 @@ class CLAdapter(private val myContractOnClickListener: ContractOnClickListener) 
     }
 
     override fun onBindViewHolder(holder: CLViewHolder, position: Int) {
+        if(contracts[position].status!=null||contracts[position].availability!=null){
+            val params = holder.itemView.layoutParams
+            params.height = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,65f,context.resources.displayMetrics).toInt()
+            holder.itemView.layoutParams = params
+        }
         holder.bind(contracts[position])
     }
 

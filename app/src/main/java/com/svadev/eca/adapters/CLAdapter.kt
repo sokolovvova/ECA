@@ -44,6 +44,8 @@ class CLAdapter(private val myContractOnClickListener: ContractOnClickListener) 
         private var locationTextView: TextView? = null
         private var priceTextView: TextView? = null
         private var volumeTextView: TextView? = null
+        private var statusTextView: TextView? = null
+        private var availabilityTextView: TextView? = null
 
         override fun onClick(v: View?) {
             contractOnClickListener.onItemClick(adapterPosition)
@@ -54,6 +56,8 @@ class CLAdapter(private val myContractOnClickListener: ContractOnClickListener) 
             locationTextView = itemView.viewTextLocation
             priceTextView = itemView.viewTextPrice
             volumeTextView = itemView.viewTextVolume
+            statusTextView = itemView.viewStatusInfo
+            availabilityTextView = itemView.viewAccessInfo
             itemView.setOnClickListener(this)
         }
 
@@ -67,6 +71,8 @@ class CLAdapter(private val myContractOnClickListener: ContractOnClickListener) 
                     locationTextView?.text = stationIdToName(item.startLocationId, parent.context)
                     priceTextView?.text = priceToString(item.price)
                     volumeTextView?.text = volumeToString(item.volume)
+                    availabilityTextView?.text = item.availability
+                    statusTextView?.text = item.status
                 }
             }
         }

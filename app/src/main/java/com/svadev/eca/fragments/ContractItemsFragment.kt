@@ -57,7 +57,7 @@ class ContractItemsFragment: Fragment() {
                 viewVolume.text= volumeToString(contract.volume)
                 model.getContractData()
             }
-            else {contract= ContractModel(null,null,null,null,null,null,null,null,null,null,null,null,null)
+            else {contract= ContractModel(null,null,null,null,null,null,null,null,null,null,null,null,null,null,null)
             fab.visibility = View.INVISIBLE}
         }
         model.currentContractItems.observe(viewLifecycleOwner){

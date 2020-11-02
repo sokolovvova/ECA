@@ -19,4 +19,5 @@ class ContractResponseModel (
     val type: String? = null,
     val volume: Double? = null,
     val status: String? = null,
+    val availability: String? = null
     )

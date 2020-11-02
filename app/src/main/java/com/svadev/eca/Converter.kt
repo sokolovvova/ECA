@@ -25,7 +25,9 @@ fun convertCRMLtoCML(list :List<ContractResponseModel>?): List<ContractModel>{
                         startLocationId = list[i].start_location_id,
                         title = list[i].title,
                         type = list[i].type,
-                        volume = list[i].volume
+                        volume = list[i].volume,
+                        status = list[i].status,
+                        availability = list[i].availability
                     ))
             }
         }

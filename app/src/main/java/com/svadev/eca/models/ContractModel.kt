@@ -27,7 +27,9 @@ data class ContractModel (
     var startLocationId: Long?,
     var title: String?,
     var type: String?,
-    var volume: Double?
+    var volume: Double?,
+    var status: String?,
+    var availability: String?
 ){
     @PrimaryKey(autoGenerate = true)
     var id: Long =0

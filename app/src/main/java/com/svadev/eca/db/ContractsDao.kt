@@ -3,7 +3,6 @@ package com.svadev.eca.db
 import androidx.lifecycle.LiveData
 import androidx.room.*
 import com.svadev.eca.models.ContractModel
-import com.svadev.eca.models.SavedContractModel
 
 @Dao
 interface ContractsDao {

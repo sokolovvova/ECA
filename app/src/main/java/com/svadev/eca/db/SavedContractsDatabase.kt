@@ -4,10 +4,11 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
 import com.svadev.eca.models.ContractModel
-import com.svadev.eca.models.SavedContractModel
 
-@Database(entities = [(ContractModel::class),(SavedContractModel::class)],version = 1)
+@Database(entities = [(ContractModel::class)],version = 2)
 abstract class SavedContractsDatabase : RoomDatabase() {
     abstract fun contractsDao() : ContractsDao
 
